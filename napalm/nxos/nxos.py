@@ -511,14 +511,14 @@ class NXOSDriver(NetworkDriver):
 
         tempinfo = self._get_reply_table(show_environment, 'TABLE_tempinfo', 'ROW_tempinfo')
         for temp in tempinfo:
+            name = '{}-{}'.format(temp['tempmod'], temp['sensor'])
             curtemp = napalm.base.helpers.convert(float, temp['curtemp'], -1)
             minthres = napalm.base.helpers.convert(float, temp['curtemp'], -1)
             majthres = napalm.base.helpers.convert(float, temp['curtemp'], -1)
 
-            environment['temperature'][temp['sensor']] = {'temperature': curtemp,
-                                                          'is_alert': curtemp > minthres,
-                                                          'is_critical': curtemp > majthres,
-                                                          }
+            environment['temperature'][name] = {'temperature': curtemp,
+                                                'is_alert': curtemp > minthres,
+                                                'is_critical': curtemp > majthres}
 
         psinfo = self._get_reply_table(show_environment['powersup'], 'TABLE_psinfo', 'ROW_psinfo')
         for ps in psinfo:

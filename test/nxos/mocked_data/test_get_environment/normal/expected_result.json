@@ -8,22 +8,22 @@
         "Fan_in_PS2": {"status": true}
     },
     "temperature": {
-        "FRONT": {
+        "1-FRONT": {
             "temperature": 22,
             "is_alert": false,
             "is_critical": false
         },
-        "BACK": {
+        "1-BACK": {
             "temperature": 31,
             "is_alert": false,
             "is_critical": false
         },
-        "CPU": {
+        "1-CPU": {
             "temperature": 36,
             "is_alert": false,
             "is_critical": false
         },
-        "TAH": {
+        "1-TAH": {
             "temperature": 47,
             "is_alert": false,
             "is_critical": false
