@@ -1,0 +1,132 @@
+{
+    "powersup": {
+        "voltage_level": "12", 
+        "TABLE_psinfo": {
+            "ROW_psinfo": [
+                {
+                    "psnum": "1", 
+                    "psmodel": "NXA-PAC-650W-PI", 
+                    "actual_out": "0 W", 
+                    "actual_input": "0 W", 
+                    "tot_capa": "0 W", 
+                    "ps_status": "Shutdown"
+                }, 
+                {
+                    "psnum": "2", 
+                    "psmodel": "NXA-PAC-650W-PI", 
+                    "actual_out": "216 W", 
+                    "actual_input": "231 W", 
+                    "tot_capa": "650 W", 
+                    "ps_status": "Ok"
+                }
+            ]
+        }, 
+        "power_summary": {
+            "ps_redun_mode": "InSrc-Redundant", 
+            "ps_oper_mode": "Non-Redundant", 
+            "tot_pow_capacity": "650.00 W", 
+            "tot_gridA_capacity": "0.00 W", 
+            "tot_gridB_capacity": "650.00 W", 
+            "cumulative_power": "650.00 W", 
+            "tot_pow_out_actual_draw": "216.00 W", 
+            "tot_pow_input_actual_draw": "231.00 W", 
+            "tot_pow_alloc_budgeted": "N/A", 
+            "available_pow": "N/A"
+        }
+    }, 
+    "fandetails": {
+        "TABLE_faninfo": {
+            "ROW_faninfo": [
+                {
+                    "fanname": "Fan1(sys_fan1)", 
+                    "fanmodel": "NXA-FAN-30CFM-B", 
+                    "fanhwver": "--", 
+                    "fandir": "front-to-back", 
+                    "fanstatus": "Ok", 
+                    "failfanlet": null
+                }, 
+                {
+                    "fanname": "Fan2(sys_fan2)", 
+                    "fanmodel": "NXA-FAN-30CFM-B", 
+                    "fanhwver": "--", 
+                    "fandir": "front-to-back", 
+                    "fanstatus": "Ok", 
+                    "failfanlet": null
+                }, 
+                {
+                    "fanname": "Fan3(sys_fan3)", 
+                    "fanmodel": "NXA-FAN-30CFM-B", 
+                    "fanhwver": "--", 
+                    "fandir": "front-to-back", 
+                    "fanstatus": "Ok", 
+                    "failfanlet": null
+                }, 
+                {
+                    "fanname": "Fan4(sys_fan4)", 
+                    "fanmodel": "NXA-FAN-30CFM-B", 
+                    "fanhwver": "--", 
+                    "fandir": "front-to-back", 
+                    "fanstatus": "Ok", 
+                    "failfanlet": null
+                }, 
+                {
+                    "fanname": "Fan_in_PS1", 
+                    "fanmodel": "--", 
+                    "fanhwver": "--", 
+                    "fandir": "front-to-back", 
+                    "fanstatus": "Shutdown"
+                }, 
+                {
+                    "fanname": "Fan_in_PS2", 
+                    "fanmodel": "--", 
+                    "fanhwver": "--", 
+                    "fandir": "front-to-back", 
+                    "fanstatus": "Ok"
+                }
+            ]
+        }, 
+        "TABLE_fan_zone_speed": {
+            "ROW_fan_zone_speed": {
+                "zone": "1", 
+                "speed": "0x80"
+            }
+        }, 
+        "fan_filter_status": "NotSupported"
+    }, 
+    "TABLE_tempinfo": {
+        "ROW_tempinfo": [
+            {
+                "tempmod": "1", 
+                "sensor": "FRONT", 
+                "majthres": "70", 
+                "minthres": "42", 
+                "curtemp": "22", 
+                "alarmstatus": "Ok"
+            }, 
+            {
+                "tempmod": "1", 
+                "sensor": "BACK", 
+                "majthres": "80", 
+                "minthres": "70", 
+                "curtemp": "31", 
+                "alarmstatus": "Ok"
+            }, 
+            {
+                "tempmod": "1", 
+                "sensor": "CPU", 
+                "majthres": "90", 
+                "minthres": "80", 
+                "curtemp": "36", 
+                "alarmstatus": "Ok"
+            }, 
+            {
+                "tempmod": "1", 
+                "sensor": "TAH", 
+                "majthres": "110", 
+                "minthres": "100", 
+                "curtemp": "47", 
+                "alarmstatus": "Ok"
+            }
+        ]
+    }
+}

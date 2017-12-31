@@ -492,6 +492,55 @@ class NXOSDriver(NetworkDriver):
             results[vrf_name] = result_vrf_dict
         return results
 
+    def get_environment(self):
+        environment = {
+                       'fans': {},
+                       'temperature': {},
+                       'power': {},
+                       'cpu': {},
+                       'memory': {}
+                       }
+        show_environment = self.device.show('show environment')
+        show_resources = self.device.show('show system resources')
+
+        faninfo = self._get_reply_table(show_environment['fandetails'],
+                                        'TABLE_faninfo',
+                                        'ROW_faninfo')
+        for fan in faninfo:
+            environment['fans'][fan['fanname']] = {'status': 'ok' == fan['fanstatus'].lower()}
+
+        tempinfo = self._get_reply_table(show_environment, 'TABLE_tempinfo', 'ROW_tempinfo')
+        for temp in tempinfo:
+            curtemp = napalm.base.helpers.convert(float, temp['curtemp'], -1)
+            minthres = napalm.base.helpers.convert(float, temp['curtemp'], -1)
+            majthres = napalm.base.helpers.convert(float, temp['curtemp'], -1)
+
+            environment['temperature'][temp['sensor']] = {'temperature': curtemp,
+                                                          'is_alert': curtemp > minthres,
+                                                          'is_critical': curtemp > majthres,
+                                                          }
+
+        psinfo = self._get_reply_table(show_environment['powersup'], 'TABLE_psinfo', 'ROW_psinfo')
+        for ps in psinfo:
+            capacity = napalm.base.helpers.convert(float, re.sub('[^\d]', '', ps['tot_capa']), -1)
+            output = napalm.base.helpers.convert(float, re.sub('[^\d]', '', ps['actual_out']), -1)
+            environment['power'][ps['psnum']] = {'status': 'ok' == ps['ps_status'].lower(),
+                                                 'capacity': capacity,
+                                                 'output': output}
+
+        cpu_usage = self._get_reply_table(show_resources, 'TABLE_cpu_usage', 'ROW_cpu_usage')
+        for cpu in cpu_usage:
+            user = napalm.base.helpers.convert(float, cpu['user'], 0)
+            kernel = napalm.base.helpers.convert(float, cpu['kernel'], 0)
+            environment['cpu'][cpu['cpuid']] = {'%usage': user+kernel}
+
+        available_ram = napalm.base.helpers.convert(int, show_resources['memory_usage_total'], -1)
+        used_ram = napalm.base.helpers.convert(int, show_resources['memory_usage_used'], -1)
+        environment['memory']['available_ram'] = available_ram
+        environment['memory']['used_ram'] = used_ram
+
+        return environment
+
     def _set_checkpoint(self, filename):
         commands = ['terminal dont-ask', 'checkpoint file {0}'.format(filename)]
         self.device.config_list(commands)
