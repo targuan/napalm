@@ -1,0 +1,13 @@
+Load average:   1 minute: 0.18   5 minutes: 0.30   15 minutes: 0.27
+Processes   :   693 total, 2 running
+CPU states  :   1.26% user,   1.76% kernel,   96.96% idle
+        CPU0 states  :   1.01% user,   2.03% kernel,   96.96% idle
+        CPU1 states  :   3.06% user,   1.02% kernel,   95.91% idle
+        CPU2 states  :   3.09% user,   4.12% kernel,   92.78% idle
+        CPU3 states  :   1.03% user,   3.09% kernel,   95.87% idle
+        CPU4 states  :   0.99% user,   0.00% kernel,   99.00% idle
+        CPU5 states  :   2.02% user,   2.02% kernel,   95.95% idle
+        CPU6 states  :   0.00% user,   1.98% kernel,   98.01% idle
+        CPU7 states  :   0.99% user,   0.00% kernel,   99.00% idle
+Memory usage:   16400792K total,   4666976K used,   11733816K free
+Current memory status: OK

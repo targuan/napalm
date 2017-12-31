@@ -929,6 +929,99 @@ class NXOSSSHDriver(NetworkDriver):
         # FIX -- need to merge IPv6 and IPv4 AFI for same neighbor
         return bgp_dict
 
+    def get_environment(self):
+        environment = {'fans': {},
+                       'temperature': {},
+                       'power': {},
+                       'cpu': {},
+                       'memory': {}}
+
+        re_memory = re.compile(r'^Memory usage:[\s]*(?P<total>\d+)[K\s]*total,'
+                               r'[\s]*(?P<used>\d+)[K\s]*used,'
+                               r'[\s]*(?P<free>\d+)[K\s]*free')
+
+        re_cpu = re.compile(r'\s*CPU(?P<cpunum>\d+) states\s*:'
+                            r'\s*(?P<user>[\d.]*)%\s*user\s*,'
+                            r'\s*(?P<kernel>[\d.]*)%\s*kernel\s*,'
+                            r'\s*(?P<idle>[\d.]*)%\s*idle\s*')
+
+        re_ps = re.compile(r'(?P<num>\d+)\s*'
+                           r'(?P<model>\S+)\s*'
+                           r'(?P<output>[\d.]+)\s*W\s*'
+                           r'(?P<input>[\d.]+)\s*W\s*'
+                           r'(?P<total>[\d.]+)\s*W\s*'
+                           r'(?P<status>\S+)')
+
+        re_fan = re.compile(r'(?P<fan>\S+)\s*'
+                            r'(?P<model>\S+)\s*'
+                            r'(?P<hw>\S+)\s*'
+                            r'(?P<diraction>\S+)\s*'
+                            r'(?P<status>\S+)')
+
+        re_temperature = re.compile(r'(?P<module>\d+)\s*'
+                                    r'(?P<sensor>\S+)\s*'
+                                    r'(?P<majthres>\d+)\s*'
+                                    r'(?P<minthres>\d+)\s*'
+                                    r'(?P<curtemp>\d+)\s*'
+                                    r'(?P<status>\S+)')
+
+        show_system_resources = self.device.send_command('show system resources')
+        show_environment = self.device.send_command('show environment')
+
+        for line in show_system_resources.splitlines():
+            m = re_memory.match(line)
+            if m:
+                total = napalm.base.helpers.convert(int, m.group('total'), -1)
+                used = napalm.base.helpers.convert(int, m.group('used'), -1)
+
+                environment['memory']['available_ram'] = total
+                environment['memory']['used_ram'] = used
+
+            m = re_cpu.match(line)
+            if m:
+                cpunum = m.group('cpunum')
+                user = napalm.base.helpers.convert(float, m.group('user'), -1)
+                kernel = napalm.base.helpers.convert(float, m.group('kernel'), -1)
+                environment['cpu'][cpunum] = {'%usage': user+kernel}
+
+        part = None
+        for line in show_environment.splitlines():
+            if part == 'ps':
+                m = re_ps.match(line)
+                if m:
+                    ps = {'status': 'ok' == m.group('status').lower(),
+                          'capacity': napalm.base.helpers.convert(float, m.group('total'), -1),
+                          'output': napalm.base.helpers.convert(float, m.group('output'), -1)}
+                    environment['power'][m.group('num')] = ps
+            elif part == 'fan':
+                m = re_fan.match(line)
+                if ':' not in line and m:
+                    if '---' in m.group('fan'):
+                        environment['fans'] = {}
+                    else:
+                        status = 'ok' == m.group('status').lower()
+                        environment['fans'][m.group('fan')] = {'status': status}
+            elif part == 'temperature':
+                m = re_temperature.match(line)
+                if m:
+                    name = '{}-{}'.format(m.group('module'), m.group('sensor'))
+                    curtemp = napalm.base.helpers.convert(float, m.group('curtemp'), -1)
+                    majthres = napalm.base.helpers.convert(float, m.group('majthres'), -1)
+                    minthres = napalm.base.helpers.convert(float, m.group('minthres'), -1)
+                    environment['temperature'][name] = {'temperature': curtemp,
+                                                        'is_alert': curtemp > minthres,
+                                                        'is_critical': curtemp > majthres}
+            if line.strip() == '':
+                part = None
+            elif 'Power Supply:' in line:
+                part = 'ps'
+            elif 'Fan:' in line:
+                part = 'fan'
+            elif 'Temperature:' in line:
+                part = 'temperature'
+
+        return environment
+
     def _send_config_commands(self, commands):
         for command in commands:
             self.device.send_command(command)
